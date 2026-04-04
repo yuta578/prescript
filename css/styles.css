@@ -1,0 +1,120 @@
+@font-face {
+  font-family: "code";
+  src: url("./media/fonts/PixelifySans-Regular.woff2") format("woff2"),
+       url("./media/fonts/PixelifySans-Regular.woff") format("woff");
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.scene {
+  background: #000;
+  height: 100vh;
+  min-height: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Georgia', serif;
+  position: relative;
+  padding: 2rem;
+}
+
+/* Esquinas */
+.corner { position: absolute; width: 28px; height: 28px; border-color: #444; border-style: solid; }
+.corner.tl { top: 20px; left: 20px; border-width: 1px 0 0 1px; }
+.corner.tr { top: 20px; right: 20px; border-width: 1px 1px 0 0; }
+.corner.bl { bottom: 20px; left: 20px; border-width: 0 0 1px 1px; }
+.corner.br { bottom: 20px; right: 20px; border-width: 0 1px 1px 0; }
+
+/* Caja principal */
+.prescrip-box {
+  border: 1px solid #2a2a2a;
+  padding: 2.5rem 3rem;
+  max-width: 560px;
+  width: 100%;
+  text-align: center;
+  min-height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+/* Texto */
+.prescrip-text {
+  font-size: 18px;
+  color: #e8e0d0;
+  line-height: 1.75;
+  font-style: italic;
+  letter-spacing: 0.02em;
+}
+
+.char.scrambling { color: #3a3a3a; }
+.char.resolved { color: #e8e0d0; }
+
+.btn-wrap { margin-top: 2.5rem; }
+
+.gen-btn {
+  background: transparent;
+  border: 1px solid #333;
+  color: #777;
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  padding: 10px 28px;
+  cursor: pointer;
+  font-family: 'Georgia', serif;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.prescrip-image img {
+  width: 100px;
+}
+
+.gen-btn:hover { border-color: #666; color: #ccc; }
+.gen-btn:active { transform: scale(0.98); }
+.gen-btn:disabled { opacity: 0.3; cursor: default; }
+
+/* ========================= */
+/* 📱 RESPONSIVE (CELULARES) */
+/* ========================= */
+@media (max-width: 600px) {
+
+  .scene {
+    padding: 1.5rem 1rem;
+  }
+
+  .prescrip-box {
+    padding: 1.5rem;
+    min-height: auto;
+  }
+
+  .prescrip-text {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  .gen-btn {
+    font-size: 9px;
+    padding: 8px 20px;
+  }
+
+  .btn-wrap {
+    margin-top: 2rem;
+  }
+
+  .prescrip-image img {
+    width: 80px;
+  }
+
+  /* Esquinas más pequeñas */
+  .corner {
+    width: 18px;
+    height: 18px;
+  }
+
+  .corner.tl { top: 10px; left: 10px; }
+  .corner.tr { top: 10px; right: 10px; }
+  .corner.bl { bottom: 10px; left: 10px; }
+  .corner.br { bottom: 10px; right: 10px; }
+}

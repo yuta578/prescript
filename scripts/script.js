@@ -166,6 +166,9 @@ function generate() {
   audio.currentTime = 0;
   audio.play().catch(() => {});
   scrambleAnimate(buildPhrase());
+
+  const clicks = parseInt(localStorage.getItem('lucky_clicks') || '0') + 1;
+  localStorage.setItem('lucky_clicks', clicks);
 }
 
 document.getElementById('btn').addEventListener('click', generate);

@@ -181,7 +181,7 @@ function scrambleAnimate(target) {
 
 scrambleAnimate.generation = 0;
 
-// --- Botón secreto ---
+
 function checkSecretButton() {
   const clicks = parseInt(localStorage.getItem('lucky_clicks') || '0');
   const existing = document.getElementById('secret-btn');
@@ -226,5 +226,101 @@ function generate() {
 
 document.getElementById('btn').addEventListener('click', generate);
 
-
 checkSecretButton();
+
+
+(function initIntro() {
+  const INTRO_KEY = 'prescript_intro_seen';
+
+  const startScreen  = document.getElementById('start-screen');
+  const startBtn     = document.getElementById('start-btn');
+  const dialogScreen = document.getElementById('dialog-screen');
+  const dialogBox    = document.getElementById('dialog-box');
+  const dialogText   = document.getElementById('dialog-text');
+  const dialogNext   = document.getElementById('dialog-next');
+  const prescripWrap = document.getElementById('prescrip-wrap');
+  const btnWrap      = document.getElementById('btn-wrap');
+  const luckyBtn     = document.getElementById('btn');
+
+  
+  const lines = [
+    "Hola.",
+    "Hace mucho no veo a alguien por aquí.",
+    "No tengas miedo.",
+    "Te voy a mostrar algo que puede ayudarte.",           
+    "Cada frase te puede resonar.",
+    "No hay respuesta correcta.",
+    "Cuando quieras, pulsa el botón.",
+    "Buena suerte."
+  ];
+
+  // Índices donde ocurren los reveals (base 0, después de avanzar desde esa línea)
+  const SHOW_BOX_AFTER  = 3; // después de leer la línea 4 (índice 3) y pulsar ›
+  const SHOW_BTN_AFTER  = 7; // después de leer la línea 7 (índice 6) y pulsar ›
+
+  let currentLine = 0;
+
+  // ── Si ya vio la intro ──────────────────────────────
+  if (localStorage.getItem(INTRO_KEY)) {
+    startScreen.style.display  = 'none';
+    dialogScreen.style.display = 'none';
+    prescripWrap.classList.add('no-intro');
+    btnWrap.classList.add('no-intro');
+    return;
+  }
+
+  // ── Primera vez: todo oculto ─────────────────────────
+  luckyBtn.disabled = true;
+
+  function showLine(idx) {
+    dialogBox.classList.remove('visible');
+    setTimeout(function () {
+      dialogText.textContent = lines[idx];
+      dialogBox.classList.add('visible');
+    }, 240);
+  }
+
+  // Al pulsar "Hablar con la flor"
+  startBtn.addEventListener('click', function () {
+    startScreen.style.transition    = 'opacity 0.35s ease';
+    startScreen.style.opacity       = '0';
+    startScreen.style.pointerEvents = 'none';
+
+    setTimeout(function () {
+      startScreen.style.display = 'none';
+      dialogScreen.classList.add('active');
+      dialogText.textContent = lines[0];
+
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          dialogBox.classList.add('visible');
+        });
+      });
+    }, 350);
+  });
+
+  // Al pulsar › (avanzar diálogo)
+  dialogNext.addEventListener('click', function () {
+    if (currentLine === SHOW_BOX_AFTER) {
+      prescripWrap.classList.add('visible');
+    }
+
+    currentLine++;
+
+    if (currentLine < lines.length) {
+      showLine(currentLine);
+    } else {
+      localStorage.setItem(INTRO_KEY, '1');
+
+      dialogBox.classList.remove('visible');
+      setTimeout(function () {
+        dialogScreen.classList.remove('active');
+        btnWrap.classList.add('visible');
+        setTimeout(function () {
+          luckyBtn.disabled = false;
+        }, 520);
+      }, 350);
+    }
+
+  });
+})();

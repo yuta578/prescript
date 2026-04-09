@@ -27,13 +27,14 @@
 .corner.br { bottom: 20px; right: 20px; border-width: 0 1px 1px 0; }
 
 /* Caja principal */
+/* FIX: min-height definido para que no cambie de tamaño al aparecer */
 .prescrip-box {
   border: 1px solid #2a2a2a;
   padding: 2.5rem 3rem;
-  max-width: 560px;
-  width: 100%;
+  width: 560px;
+  max-width: 100%;
   text-align: center;
-  min-height: 140px;
+  min-height: 160px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -42,6 +43,7 @@
 
 /* Texto */
 .prescrip-text {
+  min-height: 3.15em;
   font-size: 18px;
   color: #e8e0d0;
   line-height: 1.75;
@@ -86,17 +88,20 @@
 
   .prescrip-box {
     padding: 1.5rem;
-    min-height: auto;
+    min-height: 160px;
   }
 
   .prescrip-text {
+  min-height: 3.15em;
     font-size: 16px;
     line-height: 1.6;
   }
 
+  /* FIX móvil: botón más grande y táctil */
   .gen-btn {
-    font-size: 9px;
-    padding: 8px 20px;
+    font-size: 11px;
+    padding: 13px 32px;
+    letter-spacing: 0.22em;
   }
 
   .btn-wrap {
@@ -107,7 +112,6 @@
     width: 80px;
   }
 
-  /* Esquinas más pequeñas */
   .corner {
     width: 18px;
     height: 18px;
@@ -117,4 +121,162 @@
   .corner.tr { top: 10px; right: 10px; }
   .corner.bl { bottom: 10px; left: 10px; }
   .corner.br { bottom: 10px; right: 10px; }
+
+  /* FIX móvil: diálogo y start btn más grandes */
+  #start-btn {
+    font-size: 0.9rem;
+    padding: 14px 40px;
+  }
+
+  #dialog-text {
+    font-size: 1rem;
+    line-height: 1.75;
+  }
+
+  #dialog-next {
+    font-size: 0.8rem;
+    padding: 9px 22px;
+  }
 }
+
+
+    #start-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    #start-btn {
+      pointer-events: all;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      color: rgba(255, 255, 255, 0.65);
+      padding: 12px 36px;
+      border-radius: 3px;
+      font-size: 0.78rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: border-color 0.25s, color 0.25s;
+
+      opacity: 0;
+      animation: fadeUp 0.7s ease 0.4s forwards;
+    }
+
+    #start-btn:hover {
+      border-color: rgba(255, 255, 255, 0.55);
+      color: rgba(255, 255, 255, 0.95);
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0);   }
+    }
+
+    /* FIX: diálogo sube (más padding-bottom) para no tapar el cuadro central */
+    #dialog-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 40px;
+      pointer-events: none;
+    }
+
+    #dialog-screen.active {
+      display: flex;
+    }
+
+    #dialog-box {
+      pointer-events: all;
+      max-width: 300px;
+      width: 85%;
+      padding: 20px 24px;
+      background: rgba(8, 8, 8, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 3px;
+      text-align: left;
+
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    #dialog-box.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    #dialog-text {
+      font-size: 0.85rem;
+      line-height: 1.7;
+      color: rgba(255, 255, 255, 0.68);
+      margin: 0 0 18px;
+      min-height: 3.4em;
+    }
+
+    #dialog-next {
+      display: block;
+      margin-left: auto;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: rgba(255, 255, 255, 0.5);
+      padding: 6px 20px;
+      border-radius: 2px;
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    #dialog-next:hover {
+      border-color: rgba(255, 255, 255, 0.45);
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    #prescrip-wrap {
+      opacity: 0;
+      transform: translateY(-32px);
+      transition: opacity 0.55s ease, transform 0.62s cubic-bezier(0.22, 1, 0.36, 1);
+      pointer-events: none;
+      margin-bottom: 80px; /* sube la imagen+cuadro dejando espacio para el diálogo */
+    }
+
+    #prescrip-wrap.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: all;
+    }
+
+    #prescrip-wrap.no-intro {
+      opacity: 1;
+      transform: none;
+      transition: none;
+      pointer-events: all;
+    }
+
+    #btn-wrap {
+      text-align: center;
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transition: max-height 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease;
+    }
+
+    #btn-wrap.visible {
+      max-height: 80px;
+      opacity: 1;
+    }
+
+    #btn-wrap.no-intro {
+      max-height: 80px;
+      opacity: 1;
+      transition: none;
+    }

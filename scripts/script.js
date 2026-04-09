@@ -93,7 +93,7 @@ const SECRET_THRESHOLD = 15;
 
 let animId = null;
 let lastCombo = "";
-let isAnimating = false; // flag para evitar clicks durante animación
+let isAnimating = false; 
 const audio = new Audio(SOUND_FILE);
 
 function pick(arr) {
@@ -113,7 +113,7 @@ function buildPhrase() {
 function scrambleAnimate(target) {
   const container = document.getElementById('p-text');
 
-  // Limpia animación anterior completamente
+
   if (animId) {
     clearInterval(animId);
     animId = null;
@@ -135,7 +135,7 @@ function scrambleAnimate(target) {
   const total = target.length;
   const DURATION = 1400;
 
-  // Guardamos un id de "generación" para ignorar timeouts de animaciones viejas
+
   const generation = ++scrambleAnimate.generation;
 
   for (let i = 0; i < total; i++) {
@@ -144,7 +144,7 @@ function scrambleAnimate(target) {
     const delay = (i / total) * DURATION * 0.65 + Math.random() * 200;
 
     setTimeout(() => {
-      // Si ya se inició una nueva animación, ignorar este timeout
+     
       if (scrambleAnimate.generation !== generation) return;
 
       resolved[i] = true;
@@ -244,23 +244,26 @@ checkSecretButton();
 
   
   const lines = [
-    "Hola.",
+    "...",
     "Hace mucho no veo a alguien por aquí.",
     "No tengas miedo.",
-    "Te voy a mostrar algo que puede ayudarte.",           
+    "Solo soy una observadora.",
+    "Te voy a mostrar algo que puede ayudarte.",
+    "Aqui te mostrara mensajes para ti.",           
     "Cada frase te puede resonar.",
     "No hay respuesta correcta.",
+    "La pantalla te mostrara lo que tengas que ver",
+    "o saber...",
     "Cuando quieras, pulsa el botón.",
     "Buena suerte."
   ];
 
-  // Índices donde ocurren los reveals (base 0, después de avanzar desde esa línea)
-  const SHOW_BOX_AFTER  = 3; // después de leer la línea 4 (índice 3) y pulsar ›
+  const SHOW_BOX_AFTER  = 4; // después de leer la línea 4 (índice 3) y pulsar ›
   const SHOW_BTN_AFTER  = 7; // después de leer la línea 7 (índice 6) y pulsar ›
 
   let currentLine = 0;
 
-  // ── Si ya vio la intro ──────────────────────────────
+
   if (localStorage.getItem(INTRO_KEY)) {
     startScreen.style.display  = 'none';
     dialogScreen.style.display = 'none';
@@ -269,7 +272,7 @@ checkSecretButton();
     return;
   }
 
-  // ── Primera vez: todo oculto ─────────────────────────
+
   luckyBtn.disabled = true;
 
   function showLine(idx) {
@@ -280,7 +283,7 @@ checkSecretButton();
     }, 240);
   }
 
-  // Al pulsar "Hablar con la flor"
+
   startBtn.addEventListener('click', function () {
     startScreen.style.transition    = 'opacity 0.35s ease';
     startScreen.style.opacity       = '0';
@@ -299,7 +302,7 @@ checkSecretButton();
     }, 350);
   });
 
-  // Al pulsar › (avanzar diálogo)
+
   dialogNext.addEventListener('click', function () {
     if (currentLine === SHOW_BOX_AFTER) {
       prescripWrap.classList.add('visible');
@@ -323,4 +326,69 @@ checkSecretButton();
     }
 
   });
+})();
+
+
+(function initDebug() {
+  let pCount = 0;
+  let pTimer = null;
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key !== '.') return;
+
+    pCount++;
+    clearTimeout(pTimer);
+
+    
+    pTimer = setTimeout(function() { pCount = 0; }, 2000);
+
+    if (pCount >= 5) {
+      pCount = 0;
+      showDebugBtn();
+    }
+  });
+
+  function showDebugBtn() {
+    if (document.getElementById('debug-btn')) return;
+
+    const btn = document.createElement('button');
+    btn.id = 'debug-btn';
+    btn.textContent = 'borrar datos';
+    btn.style.cssText = `
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: transparent;
+      border: 1px solid #550000;
+      color: #883333;
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 8px 20px;
+      cursor: pointer;
+      font-family: 'Georgia', serif;
+      z-index: 9999;
+      transition: border-color 0.2s, color 0.2s;
+    `;
+
+    btn.addEventListener('mouseenter', function() {
+      btn.style.borderColor = '#aa0000';
+      btn.style.color = '#cc4444';
+    });
+    btn.addEventListener('mouseleave', function() {
+      btn.style.borderColor = '#550000';
+      btn.style.color = '#883333';
+    });
+
+    btn.addEventListener('click', function() {
+      localStorage.clear();
+      btn.textContent = 'listo ✓';
+      btn.style.color = '#448844';
+      btn.style.borderColor = '#226622';
+      setTimeout(function() { btn.remove(); }, 1500);
+    });
+
+    document.body.appendChild(btn);
+  }
 })();

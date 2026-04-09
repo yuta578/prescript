@@ -6,6 +6,9 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* ========================= */
+/* ESCENA                    */
+/* ========================= */
 .scene {
   background: #000;
   height: 100vh;
@@ -26,8 +29,9 @@
 .corner.bl { bottom: 20px; left: 20px; border-width: 0 0 1px 1px; }
 .corner.br { bottom: 20px; right: 20px; border-width: 0 1px 1px 0; }
 
-/* Caja principal */
-/* FIX: min-height definido para que no cambie de tamaño al aparecer */
+/* ========================= */
+/* CAJA PRINCIPAL            */
+/* ========================= */
 .prescrip-box {
   border: 1px solid #2a2a2a;
   padding: 2.5rem 3rem;
@@ -41,7 +45,6 @@
   flex-direction: column;
 }
 
-/* Texto */
 .prescrip-text {
   min-height: 3.15em;
   font-size: 18px;
@@ -52,8 +55,11 @@
 }
 
 .char.scrambling { color: #3a3a3a; }
-.char.resolved { color: #e8e0d0; }
+.char.resolved   { color: #e8e0d0; }
 
+/* ========================= */
+/* BOTÓN LUCKY               */
+/* ========================= */
 .btn-wrap { margin-top: 2.5rem; }
 
 .gen-btn {
@@ -68,215 +74,215 @@
   font-family: 'Georgia', serif;
   transition: border-color 0.2s, color 0.2s;
 }
-
-.prescrip-image img {
-  width: 100px;
-}
-
-.gen-btn:hover { border-color: #666; color: #ccc; }
-.gen-btn:active { transform: scale(0.98); }
+.gen-btn:hover    { border-color: #666; color: #ccc; }
+.gen-btn:active   { transform: scale(0.98); }
 .gen-btn:disabled { opacity: 0.3; cursor: default; }
 
 /* ========================= */
-/* 📱 RESPONSIVE (CELULARES) */
+/* IMAGEN                    */
+/* ========================= */
+.prescrip-image img { width: 100px; }
+
+/* ========================= */
+/* PANTALLA INICIO           */
+/* ========================= */
+#start-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+#start-btn {
+  pointer-events: all;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.22);
+  color: rgba(255,255,255,0.65);
+  padding: 12px 36px;
+  border-radius: 3px;
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.25s, color 0.25s;
+  opacity: 0;
+  animation: fadeUp 0.7s ease 0.4s forwards;
+}
+#start-btn:hover {
+  border-color: rgba(255,255,255,0.55);
+  color: rgba(255,255,255,0.95);
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ========================= */
+/* DIÁLOGO                   */
+/* ========================= */
+#dialog-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 40px;
+  pointer-events: none;
+}
+#dialog-screen.active { display: flex; }
+
+#dialog-box {
+  pointer-events: all;
+  max-width: 300px;
+  width: 85%;
+  padding: 20px 24px;
+  background: rgba(8,8,8,0.78);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 3px;
+  text-align: left;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+#dialog-box.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+#dialog-text {
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: rgba(255,255,255,0.68);
+  margin: 0 0 18px;
+  min-height: 3.4em;
+}
+
+#dialog-next {
+  display: block;
+  margin-left: auto;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.18);
+  color: rgba(255,255,255,0.5);
+  padding: 6px 20px;
+  border-radius: 2px;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+#dialog-next:hover {
+  border-color: rgba(255,255,255,0.45);
+  color: rgba(255,255,255,0.85);
+}
+
+/* ========================= */
+/* ANIMACIONES REVEAL        */
+/* ========================= */
+#prescrip-wrap {
+  opacity: 0;
+  transform: translateY(-32px);
+  transition: opacity 0.55s ease, transform 0.62s cubic-bezier(0.22,1,0.36,1);
+  pointer-events: none;
+  margin-bottom: 80px;
+}
+#prescrip-wrap.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: all;
+}
+#prescrip-wrap.no-intro {
+  opacity: 1;
+  transform: none;
+  transition: none;
+  pointer-events: all;
+}
+
+#btn-wrap {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  text-align: center;
+  transition: max-height 0.5s cubic-bezier(0.22,1,0.36,1), opacity 0.4s ease;
+}
+#btn-wrap.visible {
+  max-height: 80px;
+  opacity: 1;
+}
+#btn-wrap.no-intro {
+  max-height: 80px;
+  opacity: 1;
+  transition: none;
+}
+
+/* ========================= */
+/* 📱 MÓVIL (≤ 600px)        */
 /* ========================= */
 @media (max-width: 600px) {
 
   .scene {
-    padding: 1.5rem 1rem;
+    padding: 2rem 1.25rem;
+  }
+
+  .prescrip-image img {
+    width: 110px;
   }
 
   .prescrip-box {
-    padding: 1.5rem;
-    min-height: 160px;
+    padding: 2rem 1.5rem;
+    min-height: 200px;
+    width: 100%;
   }
 
   .prescrip-text {
-  min-height: 3.15em;
-    font-size: 16px;
-    line-height: 1.6;
+    font-size: 22px;
+    line-height: 1.7;
   }
 
-  /* FIX móvil: botón más grande y táctil */
+  /* Botón Lucky más grande */
   .gen-btn {
-    font-size: 11px;
-    padding: 13px 32px;
+    font-size: 16px;
+    padding: 20px 56px;
     letter-spacing: 0.22em;
   }
 
   .btn-wrap {
-    margin-top: 2rem;
+    margin-top: 2.5rem;
   }
 
-  .prescrip-image img {
-    width: 80px;
-  }
+  .corner { width: 20px; height: 20px; }
+  .corner.tl { top: 12px; left: 12px; }
+  .corner.tr { top: 12px; right: 12px; }
+  .corner.bl { bottom: 12px; left: 12px; }
+  .corner.br { bottom: 12px; right: 12px; }
 
-  .corner {
-    width: 18px;
-    height: 18px;
-  }
-
-  .corner.tl { top: 10px; left: 10px; }
-  .corner.tr { top: 10px; right: 10px; }
-  .corner.bl { bottom: 10px; left: 10px; }
-  .corner.br { bottom: 10px; right: 10px; }
-
-  /* FIX móvil: diálogo y start btn más grandes */
+  /* Botón de inicio más grande */
   #start-btn {
-    font-size: 0.9rem;
-    padding: 14px 40px;
+    font-size: 1.4rem;
+    padding: 22px 60px;
+  }
+
+  /* Diálogo más grande */
+  #dialog-box {
+    max-width: 92%;
+    width: 92%;
+    padding: 24px 22px;
   }
 
   #dialog-text {
-    font-size: 1rem;
-    line-height: 1.75;
+    font-size: 1.15rem;
+    line-height: 1.8;
+    min-height: 3.6em;
   }
 
+  /* Botón › más grande */
   #dialog-next {
-    font-size: 0.8rem;
-    padding: 9px 22px;
+    font-size: 1.1rem;
+    padding: 16px 36px;
   }
 }
-
-
-    #start-screen {
-      position: fixed;
-      inset: 0;
-      z-index: 200;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      pointer-events: none;
-    }
-
-    #start-btn {
-      pointer-events: all;
-      background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.22);
-      color: rgba(255, 255, 255, 0.65);
-      padding: 12px 36px;
-      border-radius: 3px;
-      font-size: 0.78rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: border-color 0.25s, color 0.25s;
-
-      opacity: 0;
-      animation: fadeUp 0.7s ease 0.4s forwards;
-    }
-
-    #start-btn:hover {
-      border-color: rgba(255, 255, 255, 0.55);
-      color: rgba(255, 255, 255, 0.95);
-    }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(8px); }
-      to   { opacity: 1; transform: translateY(0);   }
-    }
-
-    /* FIX: diálogo sube (más padding-bottom) para no tapar el cuadro central */
-    #dialog-screen {
-      position: fixed;
-      inset: 0;
-      z-index: 200;
-      display: none;
-      align-items: flex-end;
-      justify-content: center;
-      padding-bottom: 40px;
-      pointer-events: none;
-    }
-
-    #dialog-screen.active {
-      display: flex;
-    }
-
-    #dialog-box {
-      pointer-events: all;
-      max-width: 300px;
-      width: 85%;
-      padding: 20px 24px;
-      background: rgba(8, 8, 8, 0.78);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 3px;
-      text-align: left;
-
-      opacity: 0;
-      transform: translateY(12px);
-      transition: opacity 0.4s ease, transform 0.4s ease;
-    }
-
-    #dialog-box.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    #dialog-text {
-      font-size: 0.85rem;
-      line-height: 1.7;
-      color: rgba(255, 255, 255, 0.68);
-      margin: 0 0 18px;
-      min-height: 3.4em;
-    }
-
-    #dialog-next {
-      display: block;
-      margin-left: auto;
-      background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      color: rgba(255, 255, 255, 0.5);
-      padding: 6px 20px;
-      border-radius: 2px;
-      font-size: 0.72rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: border-color 0.2s, color 0.2s;
-    }
-
-    #dialog-next:hover {
-      border-color: rgba(255, 255, 255, 0.45);
-      color: rgba(255, 255, 255, 0.85);
-    }
-
-    #prescrip-wrap {
-      opacity: 0;
-      transform: translateY(-32px);
-      transition: opacity 0.55s ease, transform 0.62s cubic-bezier(0.22, 1, 0.36, 1);
-      pointer-events: none;
-      margin-bottom: 80px; /* sube la imagen+cuadro dejando espacio para el diálogo */
-    }
-
-    #prescrip-wrap.visible {
-      opacity: 1;
-      transform: translateY(0);
-      pointer-events: all;
-    }
-
-    #prescrip-wrap.no-intro {
-      opacity: 1;
-      transform: none;
-      transition: none;
-      pointer-events: all;
-    }
-
-    #btn-wrap {
-      text-align: center;
-      overflow: hidden;
-      max-height: 0;
-      opacity: 0;
-      transition: max-height 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease;
-    }
-
-    #btn-wrap.visible {
-      max-height: 80px;
-      opacity: 1;
-    }
-
-    #btn-wrap.no-intro {
-      max-height: 80px;
-      opacity: 1;
-      transition: none;
-    }

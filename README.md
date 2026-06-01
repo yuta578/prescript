@@ -1,3 +1,7 @@
-# https://yuta578.github.io/prescript
+# https://index.limbus.website/script
+# https://index.limbus.website/index
 
-# https://index.limbus.website
+git clone https://github.com/yuta578/prescript.git
+
+
+

@@ -1,0 +1,727 @@
+@import url('https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Share+Tech+Mono&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: #080808 !important;
+  color: #c8c0b0 !important;
+  font-family: 'IM Fell English', serif;
+  height: 100vh; width: 100vw;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* ══════════════════════════════════════════
+   LAYOUT RAÍZ — main-col ocupa todo menos 32px de la barra
+══════════════════════════════════════════ */
+#game {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  inset: 0;
+  background: #080808;
+  display: grid;
+  grid-template-columns: 1fr 32px;
+}
+
+/* Columna principal: tres zonas (enemy / arena / hand+hud) */
+#main-col {
+  display: grid;
+  grid-template-rows: auto 1fr auto auto auto;
+  /* enemy-area / arena-space / hand / actions / hud */
+  padding: 52px 32px 18px 32px;
+  height: 100vh;
+  overflow: hidden;
+  gap: 0;
+  align-items: center;
+  justify-items: center;
+}
+
+/* ══════════════════════════════════════════
+   BARRA PRESIÓN VERTICAL DERECHA
+══════════════════════════════════════════ */
+#pressure-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 52px 0 18px 0;
+  height: 100vh;
+}
+
+#pressure-pct {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 7px;
+  color: #3a3a3a;
+  letter-spacing: 0.05em;
+}
+
+#pressure-bar-v {
+  flex: 1;
+  width: 3px;
+  background: #141414;
+  border: 1px solid #1c1c1c;
+  position: relative;
+  margin: 8px 0;
+  overflow: hidden;
+}
+
+#pressure-fill-v {
+  width: 100%;
+  background: #8a3a3a;
+  transition: height 0.12s linear;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+#pressure-lbl {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 7px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #232323;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+
+/* ══════════════════════════════════════════
+   ZONA ENEMIGO
+══════════════════════════════════════════ */
+#enemy-area {
+  width: 100%;
+  max-width: 860px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 6px;
+}
+
+#enemy-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#enemy-name {
+  font-size: 11px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: #333;
+}
+
+#enemy-hp-wrap {
+  width: 200px; height: 3px;
+  background: #141414;
+  border: 1px solid #1e1e1e;
+}
+
+#enemy-hp-fill {
+  height: 100%;
+  background: #8a3a3a;
+  transition: width 0.4s ease;
+}
+
+#enemy-phrase {
+  font-size: 13px;
+  font-style: italic;
+  color: #5a3535;
+  text-align: center;
+  min-height: 20px;
+  transition: opacity 0.3s;
+}
+
+/* Fila de cartas enemigas */
+#enemy-cards-row {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+  min-height: 94px;
+  align-items: flex-start;
+  padding-top: 4px;
+}
+
+.enemy-card {
+  width: 118px;
+  min-height: 88px;
+  border: 1px solid #2a1212;
+  background: #0b0606;
+  padding: 9px 9px 7px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  position: relative;
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.18s, box-shadow 0.2s, opacity 0.4s;
+}
+
+.enemy-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 2px;
+  background: #5a1a1a;
+}
+
+.enemy-card:hover { border-color: #5a2a2a; transform: translateY(-3px); }
+
+.enemy-card.targeted {
+  border-color: #9a4040;
+  box-shadow: 0 0 12px rgba(154,64,64,0.4);
+  transform: translateY(-5px);
+}
+
+.enemy-card.drag-hover {
+  border-color: #cc5050;
+  box-shadow: 0 0 18px rgba(200,80,80,0.6);
+  transform: translateY(-7px) scale(1.03);
+}
+
+.enemy-card.destroyed {
+  opacity: 0;
+  transform: scale(0.75) translateY(-16px);
+  pointer-events: none;
+}
+
+.enemy-card-name {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #7a3535;
+}
+
+.enemy-card-text {
+  font-size: 10px;
+  font-style: italic;
+  color: #4a2e2e;
+  line-height: 1.4;
+  flex: 1;
+}
+
+.enemy-card-stats {
+  display: flex;
+  gap: 10px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px;
+}
+
+.enemy-card-dmg   { color: #8a3a3a; }
+.enemy-card-power { color: #7a5030; }
+
+/* ══════════════════════════════════════════
+   ARENA SPACE — zona central libre
+   (las cartas vuelan aquí al iniciar clash)
+══════════════════════════════════════════ */
+#arena-space {
+  width: 100%;
+  flex: 1;
+  position: relative;
+}
+
+/* ══════════════════════════════════════════
+   MANO DEL JUGADOR
+══════════════════════════════════════════ */
+#hand {
+  display: flex;
+  gap: 13px;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 900px;
+  align-items: flex-end;
+  padding: 4px 0;
+}
+
+.card {
+  width: 114px;
+  min-height: 122px;
+  border: 1px solid #1e1e1e;
+  background: #0e0e0e;
+  padding: 9px 9px 7px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  transition: transform 0.18s ease, border-color 0.18s, background 0.18s, box-shadow 0.18s, opacity 0.2s, filter 0.2s;
+  position: relative;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  border-color: #383838;
+  background: #131313;
+}
+
+.card.selected-for-clash {
+  border-color: #c8903a;
+  background: #110d00;
+  box-shadow: 0 0 14px rgba(200,144,58,0.45);
+  transform: translateY(-14px);
+}
+
+.card.assigned {
+  border-color: #3a6a3a;
+  background: #040e04;
+  opacity: 0.65;
+}
+
+/* Cartas bloqueadas porque no hay monedas */
+.card.coins-locked {
+  opacity: 0.18;
+  cursor: not-allowed;
+  filter: saturate(0.2) brightness(0.6);
+  pointer-events: none;
+}
+
+.card.cant-afford {
+  opacity: 0.2;
+  cursor: default;
+  pointer-events: none;
+}
+
+.card.cant-afford:hover,
+.card.coins-locked:hover { transform: none; }
+
+/* Animación de vuelo al centro (JS añade .flying y posición inline) */
+.card.flying {
+  position: fixed;
+  z-index: 35;
+  pointer-events: none;
+  transition: left 0.38s cubic-bezier(.4,0,.2,1),
+              top  0.38s cubic-bezier(.4,0,.2,1),
+              transform 0.38s cubic-bezier(.4,0,.2,1),
+              opacity  0.2s ease;
+}
+
+.card-type {
+  font-size: 7px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #444;
+}
+
+.card-text {
+  font-size: 10px;
+  font-style: italic;
+  color: #c8c0b0;
+  line-height: 1.45;
+  flex: 1;
+}
+
+.card-effect {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px;
+  color: #5a8a5a;
+}
+
+.card-cost {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 3px;
+  margin-top: 2px;
+}
+
+.cost-pip {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #a08050;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.cost-pip.unaffordable {
+  background: #2a1a08;
+  border: 1px solid #4a3010;
+}
+
+.card-type.duda       { color: #7a4040; }
+.card-type.fuerza     { color: #5a7a5a; }
+.card-type.constancia { color: #5a6a8a; }
+.card-type.especial   { color: #8a7a40; }
+
+/* ══════════════════════════════════════════
+   BOTONES
+══════════════════════════════════════════ */
+#actions {
+  display: flex;
+  gap: 14px;
+  padding: 10px 0 0 0;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.action-btn {
+  background: transparent;
+  border: 1px solid #2a2a2a;
+  color: #555;
+  font-size: 9px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  padding: 8px 22px;
+  cursor: pointer;
+  font-family: 'IM Fell English', serif;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.action-btn:hover { border-color: #555; color: #bbb; }
+.action-btn.primary { border-color: #3a5a3a; color: #5a8a5a; }
+.action-btn.primary:hover { border-color: #5a8a5a; color: #8aaa8a; }
+
+.action-btn.accent {
+  border-color: #7a5a1a;
+  color: #c8903a;
+  animation: accent-pulse 1.4s ease infinite alternate;
+}
+.action-btn.accent:hover { border-color: #c8903a; color: #f0c060; }
+
+@keyframes accent-pulse {
+  from { box-shadow: none; }
+  to   { box-shadow: 0 0 10px rgba(200,144,58,0.3); }
+}
+
+/* ══════════════════════════════════════════
+   HUD — debajo de los botones
+══════════════════════════════════════════ */
+#hud {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0 0 0;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.hud-block {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hud-label {
+  font-size: 7px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #2e2e2e;
+}
+
+.hud-val  { color: #c8c0b0; }
+.stat-hp  { color: #5a8a5a !important; }
+.hud-sep  { color: #252525; font-size: 12px; }
+
+.hud-prescrip {
+  font-size: 8px;
+  font-style: italic;
+  color: #3a3a3a;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ══════════════════════════════════════════
+   MONEDAS VISUALES
+══════════════════════════════════════════ */
+#coins-visual {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.coin {
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  border: 1px solid #2a1c08;
+  background: #0e0800;
+  font-size: 8px;
+  color: transparent;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.coin.active {
+  background: radial-gradient(circle at 35% 35%, #d4a030, #8a6010);
+  border-color: #c8903a;
+  box-shadow: 0 0 5px rgba(200,144,58,0.5);
+  color: #f0c060;
+}
+/* Moneda comprometida (asignada pero aún no gastada) */
+.coin.committed {
+  background: radial-gradient(circle at 35% 35%, #6a4a10, #2e1c04);
+  border-color: #7a5820;
+  box-shadow: none;
+  color: #5a4010;
+  opacity: 0.55;
+}
+
+
+/* Parpadeo de monedas activas cuando hay una carta seleccionada */
+.coin.blink {
+  animation: coin-blink 0.4s ease infinite alternate;
+}
+
+@keyframes coin-blink {
+  from { box-shadow: 0 0 3px rgba(200,144,58,0.3);  border-color: #c8903a; }
+  to   { box-shadow: 0 0 12px rgba(200,144,58,0.9); border-color: #f0d060;
+         background: radial-gradient(circle at 35% 35%, #f5c838, #d49020); }
+}
+
+/* Monedas inactivas parpadeando cuando se necesitan más de las que hay */
+.coin.blink-off {
+  animation: coin-blink-off 0.4s ease infinite alternate;
+}
+
+@keyframes coin-blink-off {
+  from { opacity: 0.12; }
+  to   { opacity: 0.38; border-color: #5a3a10; }
+}
+
+.coin.spent { animation: coin-spend 0.28s ease forwards; }
+.coin.gain  { animation: coin-gain  0.32s ease forwards; }
+
+@keyframes coin-spend {
+  0%   { transform: scale(1);    opacity: 1; }
+  50%  { transform: scale(1.35); opacity: 0.5; }
+  100% { transform: scale(0.55); opacity: 0.08; }
+}
+
+@keyframes coin-gain {
+  0%   { transform: scale(0.4);  opacity: 0; }
+  60%  { transform: scale(1.25); opacity: 1; }
+  100% { transform: scale(1);    opacity: 1; }
+}
+
+/* ══════════════════════════════════════════
+   SVG FLECHAS
+══════════════════════════════════════════ */
+#arrows-svg {
+  position: fixed;
+  inset: 0;
+  width: 100vw; height: 100vh;
+  pointer-events: none;
+  z-index: 20;
+  overflow: visible;
+}
+
+.arrow-line {
+  fill: none;
+  stroke: #c8903a;
+  stroke-width: 1.8;
+  stroke-dasharray: 6 3;
+  marker-end: url(#arrowhead);
+  opacity: 0.85;
+  animation: arrow-march 0.5s linear infinite;
+}
+
+@keyframes arrow-march { to { stroke-dashoffset: -18; } }
+
+/* ══════════════════════════════════════════
+   ARENA DE CLASH CENTRAL
+   Cubre la pantalla con backdrop semitransparente,
+   muestra dos cartas volando al centro
+══════════════════════════════════════════ */
+#clash-arena {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 40;
+  pointer-events: none;
+  opacity: 0;
+  /* Fondo oscuro semi-transparente que aparece con la arena */
+  background: rgba(4,4,4,0);
+  transition: opacity 0.28s ease, background 0.28s ease;
+}
+
+#clash-arena.active {
+  opacity: 1;
+  background: rgba(4,4,4,0.75);
+}
+
+#clash-arena-inner {
+  display: flex;
+  align-items: center;
+  gap: 44px;
+}
+
+/* Carta fantasma en la arena */
+.clash-ghost {
+  width: 136px;
+  min-height: 140px;
+  border: 1px solid #2a2a2a;
+  background: #0e0e0e;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  opacity: 0;
+  transform: scale(0.6) translateY(30px);
+  transition: opacity 0.32s ease, transform 0.32s ease;
+}
+
+#clash-arena.active .clash-ghost {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+.clash-ghost.player-ghost { border-color: #2a4a2a; }
+.clash-ghost.enemy-ghost  { border-color: #4a2a2a; }
+
+/* Sacudida durante rondas del clash */
+.clash-ghost.shaking {
+  animation: ghost-shake 0.2s ease 3;
+}
+
+@keyframes ghost-shake {
+  0%, 100% { transform: scale(1) translateX(0); }
+  30%       { transform: scale(1.04) translateX(-8px); }
+  70%       { transform: scale(1.04) translateX(8px); }
+}
+
+.clash-ghost-type {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 7px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #555;
+}
+
+.clash-ghost-text {
+  font-size: 10px;
+  font-style: italic;
+  color: #c8c0b0;
+  line-height: 1.4;
+  flex: 1;
+}
+
+.clash-ghost-power {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 26px;
+  font-weight: bold;
+  text-align: center;
+  transition: color 0.2s, transform 0.18s;
+}
+
+.player-ghost .clash-ghost-power { color: #5a8a5a; }
+.enemy-ghost  .clash-ghost-power { color: #8a3a3a; }
+
+.clash-ghost-power.winning {
+  color: #8aee8a;
+  transform: scale(1.22);
+}
+
+.clash-ghost-power.losing {
+  color: #3a1a1a;
+  transform: scale(0.8);
+}
+
+#clash-vs {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+#clash-vs-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: #444;
+}
+
+#clash-score {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 32px;
+  color: #7a6030;
+  transition: transform 0.15s;
+  min-width: 64px;
+  text-align: center;
+}
+
+#clash-score.bump {
+  transform: scale(1.45);
+  color: #d4a050;
+}
+
+/* ══════════════════════════════════════════
+   LOG FLOTANTE
+══════════════════════════════════════════ */
+
+/* ══════════════════════════════════════════
+   FLASH DE PANTALLA
+══════════════════════════════════════════ */
+@keyframes flash-green { 0%,100%{background:#080808} 50%{background:#040e04} }
+@keyframes flash-red   { 0%,100%{background:#080808} 50%{background:#0e0404} }
+@keyframes flash-clash { 0%,100%{background:#080808} 40%{background:#0e0b03} }
+
+body.flash-green { animation: flash-green 0.35s ease; }
+body.flash-red   { animation: flash-red   0.35s ease; }
+body.flash-clash { animation: flash-clash 0.42s ease; }
+
+/* ══════════════════════════════════════════
+   OVERLAY ENTRE RONDAS
+══════════════════════════════════════════ */
+#overlay {
+  position: fixed; inset: 0;
+  background: linear-gradient(rgba(0,0,0,0.92),rgba(0,0,0,0.92)),
+              url('../../../public/media/static.gif') repeat;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  z-index: 50;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s;
+}
+
+#overlay.visible { opacity: 1; pointer-events: all; }
+
+/* ══ CORNERS ══ */
+.corner {
+  position: fixed;
+  width: 22px; height: 22px;
+  border-color: #191919;
+  border-style: solid;
+}
+.corner.tl { top:16px;    left:16px;  border-width:1px 0 0 1px; }
+.corner.tr { top:16px;    right:16px; border-width:1px 1px 0 0; }
+.corner.bl { bottom:16px; left:16px;  border-width:0 0 1px 1px; }
+.corner.br { bottom:16px; right:16px; border-width:0 1px 1px 0; }
+
+#round-label {
+  font-size: 8px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #1e1e1e;
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+}
+
+/* ══ SHAKE EN MANO / CAMPO ══ */
+@keyframes clash-shake {
+  0%,100% { transform: translateY(-14px) translateX(0); }
+  30%     { transform: translateY(-14px) translateX(-6px); }
+  70%     { transform: translateY(-14px) translateX(6px); }
+}
+.card.clashing { animation: clash-shake 0.18s ease 3; }
+
+@keyframes enemy-shake {
+  0%,100% { transform: translateY(-5px) translateX(0); }
+  30%     { transform: translateY(-5px) translateX(5px); }
+  70%     { transform: translateY(-5px) translateX(-5px); }
+}
+.enemy-card.clashing { animation: enemy-shake 0.18s ease 3; }

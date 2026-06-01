@@ -1,0 +1,141 @@
+<div id="blackout-total" [class.active]="pantallaDesenfocada"></div>
+
+<div id="reloj-sistema"
+  [style.opacity]="relojVisible ? '1' : '0'"
+  [style.visibility]="relojVisible ? 'visible' : 'hidden'">
+  {{reloj}}
+</div>
+
+<div id="btn-trigger-menu" class="menu-trigger"
+  *ngIf="triggerVisible"
+  (click)="restaurarMenu()">
+  [ + ] Menu
+</div>
+<div id="btn-trigger-menu" class="menu-trigger"
+  *ngIf="triggerVisible"
+  (click)="restaurarMenu()">
+  [ + ] Menu
+</div>
+<div id="btn-trigger-menu" class="menu-trigger"
+  *ngIf="triggerVisible"
+  (click)="restaurarMenu()">
+  [ + ] Menu
+</div>
+
+<div id="contenedor-juego" [class.pantalla-desenfocada]="pantallaDesenfocada">
+
+  <div class="sidebar-menu" [class.collapsed]="sidebarCollapsed">
+    <div class="subtitulo-juego">el espejo</div>
+    <div class="lista-botones">
+      <button class="btn-menu"
+        [class.active]="activePanel === 'panel-sumision' && !sidebarCollapsed"
+        (click)="seleccionarOpcion('panel-sumision')">Asumir</button>
+      <button class="btn-menu"
+        [class.active]="activePanel === 'panel-tribunal' && !sidebarCollapsed"
+        (click)="seleccionarOpcion('panel-tribunal')">Firmar destino</button>
+      <button class="btn-menu"
+        [class.active]="activePanel === 'panel-afrontamiento' && !sidebarCollapsed"
+        (click)="seleccionarOpcion('panel-afrontamiento')">Rasgos</button>
+    </div>
+  </div>
+
+  <div class="zona-contenido" [class.oculta]="zonaOculta">
+    <div class="cuadro-interactivo">
+
+      <!-- PANEL SUMISION -->
+      <div class="panel-contenido" [class.activo]="activePanel === 'panel-sumision'">
+
+        <button id="btn-entrar" class="btn-entrar-scramble"
+          [class.visible]="btnEntrarVisible"
+          (click)="ejecutarTransicion()">
+          {{btnEntrarText}}
+        </button>
+
+        <h2>La Escala de Sumisión</h2>
+        <div class="descripcion-seccion">Determinación de directrices estructurales de la sesión</div>
+
+        <div class="dificultades-grid">
+          <div class="dif-card" [class.selected]="activeDificultad === 'inocente'" (click)="seleccionarDificultad('inocente')">
+            <div>
+              <div class="dif-name">Inocente</div>
+              <div class="dif-desc">"Un ser puro con buenas intenciones, libre de elegir sus propias decisiones."</div>
+            </div>
+            <div class="dif-badge">Bloque Libre</div>
+          </div>
+
+          <div class="dif-card" [class.selected]="activeDificultad === 'contencion'" (click)="seleccionarDificultad('contencion')">
+            <div>
+              <div class="dif-name">Contención</div>
+              <div class="dif-desc">"El pecado llega a tu mente pero te abstienes de hacerlo."</div>
+            </div>
+            <div class="dif-badge">Bloque Libre</div>
+          </div>
+
+          <div class="dif-card" [class.selected]="activeDificultad === 'culpable'" (click)="seleccionarDificultad('culpable')">
+            <div>
+              <div class="dif-name">Culpable</div>
+              <div class="dif-desc">"Afronta tus consecuencias."</div>
+            </div>
+            <div class="dif-badge">Prescriptivo</div>
+          </div>
+
+          <div class="dif-card" [class.selected]="activeDificultad === 'index'" (click)="seleccionarDificultad('index')">
+            <div>
+              <div class="dif-name">Index</div>
+              <div class="dif-desc">"Obedeces ciegamente, prepárate para confrontar atrocidades..."</div>
+            </div>
+            <div class="dif-badge">Prescriptivo</div>
+          </div>
+        </div>
+
+        <div class="consola-prescripto" [style.color]="consolaColor">
+          {{consolaTexto}}
+        </div>
+      </div>
+
+      <!-- PANEL TRIBUNAL -->
+      <div class="panel-contenido" [class.activo]="activePanel === 'panel-tribunal'">
+        <h2>El Tribunal de la Culpa</h2>
+        <div class="descripcion-seccion">Manifestación involuntaria de ideas mediante interrogatorio selectivo</div>
+
+        <div class="tribunal-centro">
+          <div class="acusacion-cuadro">{{textoTribunal}}</div>
+
+          <div class="opciones-tribunal">
+            <button class="btn-tribunal btn-obedecer" (click)="procesarRespuesta('obedecer')">Aceptar la Culpa (Obedecer)</button>
+            <button class="btn-tribunal btn-rebelarse" (click)="procesarRespuesta('rebelarse')">Reclamar Inocencia (Rebelarse)</button>
+          </div>
+
+          <div class="notificacion-gacha"
+            [style.opacity]="notificacionVisible ? '1' : '0'"
+            [style.color]="notificacionColor"
+            [innerHTML]="notificacionHtml">
+          </div>
+        </div>
+      </div>
+
+      <!-- PANEL RASGOS -->
+      <div class="panel-contenido" [class.activo]="activePanel === 'panel-afrontamiento'">
+        <h2>Mecanismos de Afrontamiento</h2>
+        <div class="descripcion-seccion">Gestión de rasgos fijos adquiridos por alteración conductual</div>
+
+        <div class="contador-traits">
+          Cicatrices Mentales Enlazadas: {{contadorTraits}} / 3
+        </div>
+
+        <div class="traits-grid">
+          <div *ngFor="let trait of traits; let i = index"
+            class="trait-card"
+            [class.equipped]="trait.enlazado"
+            (click)="toggleTrait(i)">
+            <div class="trait-name">{{trait.nombre}}</div>
+            <div class="trait-effect">{{trait.efecto}}</div>
+            <div class="trait-tag">{{trait.enlazado ? 'ENLAZADO' : 'DESENLAZADO'}}</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
